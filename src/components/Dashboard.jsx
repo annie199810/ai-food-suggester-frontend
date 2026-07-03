@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useResponsive } from "../hooks/useResponsive";
 import { motion } from "framer-motion";
 import Sidebar from "./Sidebar";
 import { getMealTime, getBMIStatus } from "../utils/helpers";
@@ -10,6 +11,7 @@ export default function Dashboard(props) {
   const [calorieInput, setCalorieInput] = useState("");
   const mealTime = getMealTime();
   const bmiStatus = bmi ? getBMIStatus(parseFloat(bmi)) : null;
+  const { isMobile, isTablet } = useResponsive();
 
   const cardStyle = {
     background: C.surface,
@@ -46,7 +48,7 @@ export default function Dashboard(props) {
         <div style={{ flex: 1, overflow: "auto", padding: "24px 28px" }}>
 
           {/* Stat cards */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: "14px", marginBottom: "24px" }}>
+          <div style={{ display: "grid", gridTemplateColumns: isMobile ? "repeat(2,1fr)" : isTablet ? "repeat(2,1fr)" : "repeat(4,1fr)", gap: "14px", marginBottom: "24px" }}>
             {statCards.map((s, i) => (
               <motion.div key={i}
                 initial={{ opacity: 0, y: 20 }}
@@ -62,7 +64,7 @@ export default function Dashboard(props) {
           </div>
 
           {/* Main grid */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "18px" }}>
+          <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: "18px" }}>
 
             {/* BMI */}
             <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }} style={cardStyle}>

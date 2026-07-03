@@ -8,7 +8,6 @@ import { getMealTime } from "./utils/helpers";
 
 const API = `${process.env.REACT_APP_API_URL}/api`;
 
-
 export default function App() {
   const [page, setPage] = useState("login");
   const [token, setToken] = useState("");
@@ -23,6 +22,7 @@ export default function App() {
   const [waterCount, setWaterCount] = useState(0);
   const [calorieLog, setCalorieLog] = useState([]);
   const [mealPlan, setMealPlan] = useState("");
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const isDark = theme === "dark";
   const C = {
@@ -52,7 +52,7 @@ export default function App() {
     setUserName(res.data.user.name);
     setMessages([{
       role: "ai",
-      text: `Hey ${res.data.user.name}! 👋 I'm NutriAI, your personal AI chef. It's ${mealTime.emoji} ${mealTime.label} time — what are you craving today? I can suggest recipes, track your nutrition, and plan your meals! 🍱`,
+      text: `Hey ${res.data.user.name}! 👋 I'm NutriAI, your personal AI chef. It's ${mealTime.emoji} ${mealTime.label} time — what are you craving today? 🍱`,
       time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
     }]);
     setPage("home");
@@ -63,12 +63,11 @@ export default function App() {
     await handleLogin(email, password);
   };
 
-  const logout = () => {
-    setToken(""); setPage("login"); setMessages([]);
-  };
+  const logout = () => { setToken(""); setPage("login"); setMessages([]); };
 
   const sharedProps = {
-    C, theme, setTheme, userName, token,
+    C, theme, setTheme,
+    userName, token,
     messages, setMessages,
     cuisine, setCuisine,
     mood, setMood,
@@ -79,6 +78,7 @@ export default function App() {
     waterCount, setWaterCount,
     calorieLog, setCalorieLog,
     mealPlan, setMealPlan,
+    sidebarOpen, setSidebarOpen,
   };
 
   if (page === "login" || page === "register") {

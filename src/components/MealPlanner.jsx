@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useResponsive } from "../hooks/useResponsive";
 import { motion } from "framer-motion";
 import axios from "axios";
 import Sidebar from "./Sidebar";
@@ -10,6 +11,7 @@ export default function MealPlanner(props) {
   const { C, token, dietType, cuisine, mood, bmi, mealPlan, setMealPlan } = props;
   const [loading, setLoading] = useState(false);
   const mealTime = getMealTime();
+  const { isMobile } = useResponsive();
 
   const generateMealPlan = async () => {
     setLoading(true);
@@ -96,7 +98,7 @@ Make it practical, delicious and easy to prepare at home!`
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
               style={{ background: C.surface, borderRadius: "20px", padding: "28px", border: `1px solid ${C.border}`, marginBottom: "20px" }}>
               <h3 style={{ margin: "0 0 20px", fontSize: "15px" }}>✨ Your Preferences</h3>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: "12px", marginBottom: "24px" }}>
+              <div style={{ display: "grid", gridTemplateColumns: isMobile ? "repeat(2,1fr)" : "repeat(4,1fr)", gap: "12px", marginBottom: "24px" }}>
                 {[
                   { label: "Diet", value: dietType !== "Any" ? dietType : "No restriction", emoji: "🥗", color: "#06d6a0" },
                   { label: "Cuisine", value: cuisine, emoji: "🍽️", color: "#ff6b35" },

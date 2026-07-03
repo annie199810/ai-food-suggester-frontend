@@ -1,11 +1,12 @@
 import { useState, useRef, useEffect } from "react";
+import { useResponsive } from "../hooks/useResponsive";
 import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
 import Sidebar from "./Sidebar";
 import { getMealTime, QUICK_PROMPTS, FOOD_IMAGES } from "../utils/helpers";
 import { useVoice } from "../hooks/useVoice";
 
-const API = "http://localhost:5000/api";
+const API = `${process.env.REACT_APP_API_URL}/api`;
 
 export default function ChatPage(props) {
   const {
@@ -25,7 +26,8 @@ export default function ChatPage(props) {
   const chatEndRef = useRef(null);
   const mealTime = getMealTime();
   const randomImage = FOOD_IMAGES[Math.floor(Date.now() / 30000) % FOOD_IMAGES.length];
-
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+const { isMobile, isTablet } = useResponsive();
   const { isListening, startListening, supported } = useVoice((transcript) => {
     setQuery(transcript);
   });
@@ -87,7 +89,12 @@ Be warm, friendly and conversational!`;
 
   return (
     <div style={{ display: "flex", height: "100vh", fontFamily: "'Segoe UI', sans-serif", background: C.bg, color: C.text, overflow: "hidden" }}>
-      <Sidebar {...props} messages={messages} />
+     {(!isMobile || sidebarOpen) && (
+  <Sidebar
+    {...props}
+    messages={messages}
+  />
+)}
 
       <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden", position: "relative" }}>
 
@@ -96,29 +103,33 @@ Be warm, friendly and conversational!`;
         <div style={{ position: "absolute", bottom: "20%", left: "5%", width: "200px", height: "200px", background: "rgba(67,97,238,0.04)", borderRadius: "50%", filter: "blur(60px)", pointerEvents: "none" }} />
 
         {/* Header */}
-        <div style={{ padding: "14px 24px", borderBottom: `1px solid ${C.border}`, background: C.sidebar, display: "flex", alignItems: "center", justifyContent: "space-between", zIndex: 10 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-            <div style={{ width: "38px", height: "38px", background: "linear-gradient(135deg, #ff6b35, #ff8c42)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "20px" }}>🤖</div>
-            <div>
-              <p style={{ margin: 0, fontWeight: "700", fontSize: "15px" }}>NutriAI Chef</p>
-              <p style={{ margin: 0, fontSize: "11px", color: C.green }}>
-                ● Online · {cuisine} · {mealTime.label}{mood ? ` · ${mood}` : ""}{dietType !== "Any" ? ` · ${dietType}` : ""}
-              </p>
-            </div>
-          </div>
-
-          {/* Food image of the moment */}
-          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-            <div style={{ textAlign: "right" }}>
-              <p style={{ margin: 0, fontSize: "11px", color: C.subtext }}>Featured Dish</p>
-              <p style={{ margin: 0, fontSize: "11px", color: C.accent }}>{mealTime.emoji} {mealTime.label} Special</p>
-            </div>
-            <img src={randomImage} alt="food"
-              style={{ width: "44px", height: "44px", borderRadius: "10px", objectFit: "cover", border: `2px solid ${C.border}` }}
-              onError={e => e.target.style.display = "none"}
-            />
-          </div>
-        </div>
+        {/* Header */}
+<div style={{ padding: isMobile ? "12px 16px" : "14px 24px", borderBottom: `1px solid ${C.border}`, background: C.sidebar, display: "flex", alignItems: "center", justifyContent: "space-between", zIndex: 10 }}>
+  <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+    {/* Hamburger for mobile */}
+    <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
+      onClick={() => setSidebarOpen(!sidebarOpen)}
+      style={{ background: C.card, border: `1px solid ${C.border}`, color: C.text, borderRadius: "8px", padding: "7px 10px", cursor: "pointer", fontSize: "15px" }}>
+      ☰
+    </motion.button>
+    <div style={{ width: "36px", height: "36px", background: "linear-gradient(135deg, #ff6b35, #ff8c42)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px" }}>🤖</div>
+    <div>
+      <p style={{ margin: 0, fontWeight: "700", fontSize: isMobile ? "13px" : "15px" }}>NutriAI Chef</p>
+      {!isMobile && <p style={{ margin: 0, fontSize: "11px", color: C.green }}>● Online · {cuisine} · {mealTime.label}{mood ? ` · ${mood}` : ""}</p>}
+    </div>
+  </div>
+  {!isMobile && (
+    <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+      <div style={{ textAlign: "right" }}>
+        <p style={{ margin: 0, fontSize: "11px", color: C.subtext }}>Featured</p>
+        <p style={{ margin: 0, fontSize: "11px", color: C.accent }}>{mealTime.emoji} {mealTime.label} Special</p>
+      </div>
+      <img src={randomImage} alt="food"
+        style={{ width: "40px", height: "40px", borderRadius: "10px", objectFit: "cover", border: `2px solid ${C.border}` }}
+        onError={e => e.target.style.display = "none"} />
+    </div>
+  )}
+</div>
 
         {/* Messages */}
         <div style={{ flex: 1, overflow: "auto", padding: "24px 28px" }}>
