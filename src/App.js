@@ -6,7 +6,8 @@ import Dashboard from "./components/Dashboard";
 import MealPlanner from "./components/MealPlanner";
 import { getMealTime } from "./utils/helpers";
 
-const API = "http://localhost:5000/api";
+const API = `${process.env.REACT_APP_API_URL}/api`;
+
 
 export default function App() {
   const [page, setPage] = useState("login");
