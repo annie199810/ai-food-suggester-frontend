@@ -8,7 +8,18 @@ import { useVoice } from "../hooks/useVoice";
 const API = "http://localhost:5000/api";
 
 export default function ChatPage(props) {
-  const { C, token, messages, setMessages, cuisine, mood, dietType, favourites, setFavourites, theme, setTheme, userName, setPage, logout, setCuisine, setMood, setDietType, page } = props;
+  const {
+  C,
+  token,
+  messages,
+  setMessages,
+  cuisine,
+  mood,
+  dietType,
+  favourites,
+  setFavourites,
+  userName,
+} = props;
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const chatEndRef = useRef(null);
